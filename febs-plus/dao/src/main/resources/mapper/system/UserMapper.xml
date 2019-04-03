@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.dao.system.UserMapper">
+
+    <select id="findUserDetail" resultType="cc.mrbird.domain.system.User">
+        SELECT
+        u.user_id userId,
+        u.username,
+        u.password,
+        u.email,
+        u.mobile,
+        u. status,
+        u.create_time createTime,
+        u.ssex,
+        d.dept_id deptId,
+        d.dept_name deptName,
+        u.avatar,
+        u.description,
+        u.last_login_time lastLoginTime,
+        group_concat(r.role_id) roleId,
+        group_concat(r.role_name) roleName
+        FROM
+        t_user u
+        left join t_dept d on (u.dept_id = d.dept_id)
+        left join  t_user_role ur on (u.user_id = ur.user_id)
+        left join  t_role r on r.role_id = ur.role_id
+        WHERE 1 = 1
+        <if test="user.username != null and user.username != ''">
+            and u.username like '%${user.username}%'
+        </if>
+        <if test="user.deptId != null and user.deptId != ''">
+            and d.dept_id = #{user.deptId}
+        </if>
+        <if test="user.createTimeFrom != null and user.createTimeFrom !=''">
+            and u.create_time &gt; #{user.createTimeFrom}
+        </if>
+        <if test="user.createTimeTo!= null and user.createTimeTo !=''">
+            and u.create_time &lt; #{user.createTimeTo}
+        </if>
+        <if test="user.ssex != null and user.ssex != ''">
+            and u.ssex = #{user.ssex}
+        </if>
+        <if test="user.status != null and user.status != ''">
+            and u.status = #{user.status}
+        </if>
+        group by u.username
+
+    </select>
+
+    <select id="queryUserDetail" resultType="cc.mrbird.domain.system.User">
+        SELECT
+        u.user_id userId,
+        u.username,
+        u.password,
+        u.email,
+        u.mobile,
+        u. status,
+        u.create_time createTime,
+        u.ssex,
+        d.dept_id deptId,
+        d.dept_name deptName,
+        u.avatar,
+        u.description,
+        u.last_login_time lastLoginTime,
+        group_concat(r.role_id) roleId,
+        group_concat(r.role_name) roleName
+        FROM
+        t_user u
+        left join t_dept d on (u.dept_id = d.dept_id)
+        left join  t_user_role ur on (u.user_id = ur.user_id)
+        left join  t_role r on r.role_id = ur.role_id
+        WHERE u.username = #{username}
+
+    </select>
+</mapper>
